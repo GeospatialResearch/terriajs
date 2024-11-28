@@ -29,9 +29,9 @@ export function setViewerMode(
   viewer: TerriaViewer
 ): void {
   runInAction(() => {
-    if (viewerMode === "3d" || viewerMode === "3dsmooth") {
+    if (viewerMode === "3dsmooth") {
       viewer.viewerMode = ViewerMode.Cesium;
-      viewer.viewerOptions.useTerrain = viewerMode === "3d";
+      viewer.viewerOptions.useTerrain = false;
     } else if (viewerMode === "2d") {
       viewer.viewerMode = ViewerMode.Leaflet;
     } else {
