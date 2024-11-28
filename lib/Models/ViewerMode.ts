@@ -7,12 +7,6 @@ enum ViewerMode {
 }
 
 export const MapViewers = Object.seal({
-  "3d": {
-    viewerMode: ViewerMode.Cesium,
-    terrain: true,
-    label: "settingPanel.viewerModeLabels.CesiumTerrain",
-    available: true
-  },
   "3dsmooth": {
     viewerMode: ViewerMode.Cesium,
     terrain: false,
