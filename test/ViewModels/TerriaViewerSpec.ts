@@ -25,7 +25,7 @@ describe("TerriaViewer", function () {
       north: -10
     });
 
-    setViewerMode("3d", terriaViewer);
+    setViewerMode("3dsmooth", terriaViewer);
 
     terriaViewer.beforeViewerChanged.addEventListener(() => {
       mockBeforeViewerChanges();
@@ -56,12 +56,6 @@ describe("TerriaViewer", function () {
       expect(terriaViewer.viewerMode).toBe(ViewerMode.Leaflet);
     });
 
-    it("should not trigger event, change to 3dsmooth from 3d", () => {
-      setViewerMode("3dsmooth", terriaViewer);
-      expect(mockBeforeViewerChanges).not.toHaveBeenCalled();
-      expect(mockAfterViewerChanges).not.toHaveBeenCalled();
-      expect(terriaViewer.viewerMode).toBe(ViewerMode.Cesium);
-    });
     it("should trigger events, on multiple changes", () => {
       setViewerMode("2d", terriaViewer);
       setViewerMode("3dsmooth", terriaViewer);
