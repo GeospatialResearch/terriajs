@@ -61,17 +61,6 @@ export const MapColumn: FC<IMapColumnProps> = observer(
                 ${viewState.explorerPanelIsVisible && "opacity: 0.3;"}
               `}
             >
-              <MenuBar
-                menuItems={customElements.menu}
-                menuLeftItems={customElements.menuLeft}
-                animationDuration={animationDuration}
-                elementConfig={viewState.terria.elements.get("menu-bar")}
-              />
-              <MapNavigation
-                viewState={viewState}
-                navItems={customElements.nav}
-                elementConfig={viewState.terria.elements.get("map-navigation")}
-              />
             </div>
           )}
           <Box
