@@ -212,18 +212,6 @@ class MobileHeader extends Component {
                   background-color: ${(p) => p.theme.dark};
                 `}
               >
-                <button
-                  type="button"
-                  className={Styles.btnAdd}
-                  onClick={this.onMobileDataCatalogClicked.bind(this)}
-                >
-                  {t("mobile.addDataBtnText")}
-                  <StyledIcon
-                    glyph={Icon.GLYPHS.increase}
-                    styledWidth="20px"
-                    styledHeight="20px"
-                  />
-                </button>
                 {nowViewingLength > 0 && (
                   <button
                     type="button"
@@ -240,17 +228,6 @@ class MobileHeader extends Component {
                     </span>
                   </button>
                 )}
-                <button
-                  className={Styles.btnSearch}
-                  type="button"
-                  onClick={this.showSearch.bind(this)}
-                >
-                  <StyledIcon
-                    glyph={Icon.GLYPHS.search}
-                    styledWidth="20px"
-                    styledHeight="20px"
-                  />
-                </button>
               </div>
             </>
           ) : (
