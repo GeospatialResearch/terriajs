@@ -14,6 +14,10 @@ import {
   selectOnMap as selectExistingPolygonOnMap,
   getDisplayValue as getExistingPolygonParameterDisplayValue
 } from "./SelectAPolygonParameterEditor";
+import {
+  selectOnMap as selectExistingLayerOnMap,
+  getDisplayValue as getExistingLayerParameterDisplayValue
+} from "./SelectAPolygonLayerParameterEditor";
 import { getDisplayValue as getRegionPickerDisplayValue } from "./RegionPicker";
 import GeoJsonParameter from "../../Models/FunctionParameters/GeoJsonParameter";
 import { withTranslation } from "react-i18next";
@@ -71,6 +75,18 @@ class GeoJsonParameterEditor extends Component {
     });
   }
 
+  selectExistingLayerOnMap() {
+    runInAction(() => {
+      this.props.parameter.setValue(CommonStrata.user, undefined);
+      selectExistingLayerOnMap(
+        this.props.previewed.terria,
+        this.props.viewState,
+        this.props.parameter
+      );
+      this.props.parameter.subtype = GeoJsonParameter.SelectALayerType;
+    });
+  }
+
   render() {
     const { t } = this.props;
     return (
@@ -109,6 +125,13 @@ class GeoJsonParameterEditor extends Component {
           >
             <strong>{t("analytics.existingPolygon")}</strong>
           </button>
+          <button
+            type="button"
+            onClick={() => this.selectExistingLayerOnMap()}
+            className={Styles.btnLocationSelector}
+          >
+            <strong>{t("analytics.existingLayer")}</strong>
+          </button>
         </div>
         <input
           className={Styles.field}
@@ -138,6 +161,9 @@ function getDisplayValue(value, parameter) {
   }
   if (parameter.subtype === GeoJsonParameter.PolygonType) {
     return getPolygonParameterDisplayValue(value);
+  }
+  if (parameter.subtype === GeoJsonParameter.SelectALayerType) {
+    return getExistingLayerParameterDisplayValue(value);
   }
   return getRegionPickerDisplayValue(value, parameter);
 }

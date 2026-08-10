@@ -1,6 +1,7 @@
 import { Feature } from "geojson";
 import { computed, makeObservable, observable } from "mobx";
 import Cartographic from "terriajs-cesium/Source/Core/Cartographic";
+import { FeatureCollectionWithCrs } from "../../Core/GeoJson";
 import { JsonObject } from "../../Core/Json";
 import CatalogFunctionMixin from "../../ModelMixins/CatalogFunctionMixin";
 import FunctionParameter, {
@@ -11,6 +12,7 @@ import PointParameter, { CartographicPoint } from "./PointParameter";
 import PolygonParameter, { PolygonCoordinates } from "./PolygonParameter";
 import RegionParameter from "./RegionParameter";
 import SelectAPolygonParameter from "./SelectAPolygonParameter";
+import SelectALayerParameter from "./SelectALayerParameter";
 
 export interface GeoJsonFunctionParameter {
   geoJsonFeature: Feature | Feature[] | undefined;
@@ -23,7 +25,8 @@ export function isGeoJsonFunctionParameter(
     PointParameter.type,
     LineParameter.type,
     PolygonParameter.type,
-    GeoJsonParameter.type
+    GeoJsonParameter.type,
+    SelectALayerParameter.type
   ].includes(fp.type);
 }
 
@@ -42,6 +45,7 @@ export default class GeoJsonParameter
   static readonly PolygonType = "polygon";
   static readonly RegionType = "region";
   static readonly SelectAPolygonType = "selectAPolygon";
+  static readonly SelectALayerType = "selectALayer";
 
   @observable
   public subtype?: string;
@@ -61,7 +65,12 @@ export default class GeoJsonParameter
    * Return representation of value as URL argument.
    */
   getProcessedValue(
-    value: Cartographic | PolygonCoordinates | Feature[] | JsonObject
+    value:
+      | Cartographic
+      | PolygonCoordinates
+      | Feature[]
+      | JsonObject
+      | FeatureCollectionWithCrs
   ) {
     if (this.subtype === GeoJsonParameter.PointType) {
       return {
@@ -85,6 +94,14 @@ export default class GeoJsonParameter
         )
       };
     }
+    if (this.subtype === GeoJsonParameter.SelectALayerType) {
+      return {
+        inputType: "ComplexData",
+        inputValue: SelectALayerParameter.formatValueForUrl(
+          value as FeatureCollectionWithCrs
+        )
+      };
+    }
   }
 
   @computed get geoJsonFeature(): Feature | Feature[] | undefined {
@@ -98,6 +115,9 @@ export default class GeoJsonParameter
     }
     if (this.subtype === GeoJsonParameter.SelectAPolygonType) {
       return SelectAPolygonParameter.getGeoJsonFeature(this.value);
+    }
+    if (this.subtype === GeoJsonParameter.SelectALayerType) {
+      return SelectALayerParameter.getGeoJsonFeature(this.value);
     }
 
     return;

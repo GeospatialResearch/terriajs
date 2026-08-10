@@ -716,6 +716,7 @@
     "point": "Point (lat/lon)",
     "polygon": "Polygon",
     "existingPolygon": "Existing Polygon",
+    "existingLayer": "Existing Layer",
     "nothingSelected": "Nothing has been selected, please use the buttons above to make a selection.",
     "runAnalysis": "Run Analysis",
     "clickToDrawLine": "Click to draw line",
