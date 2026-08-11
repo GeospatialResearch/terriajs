@@ -190,7 +190,7 @@
     "build-tools": "webpack --config buildprocess/webpack-tools.config.js",
     "watch-tools": "webpack --watch --config buildprocess/webpack-tools.config.js",
     "build-docs": "yarn build-tools && node build/generateDocs.js",
-    "postinstall": "gulp post-npm-install",
+    "postinstall": "npx gulp post-npm-install",
     "build-for-node": "tsc -b tsconfig-node.json",
     "prepare": "yarn build-for-node",
     "lint": "gulp lint",
