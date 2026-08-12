@@ -125,13 +125,6 @@ class GeoJsonParameterEditor extends Component {
           >
             <strong>{t("analytics.existingPolygon")}</strong>
           </button>
-          <button
-            type="button"
-            onClick={() => this.selectExistingLayerOnMap()}
-            className={Styles.btnLocationSelector}
-          >
-            <strong>{t("analytics.existingLayer")}</strong>
-          </button>
         </div>
         <input
           className={Styles.field}

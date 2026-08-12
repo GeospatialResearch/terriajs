@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import PointParameterEditor from "./PointParameterEditor";
 import LineParameterEditor from "./LineParameterEditor";
 import PolygonParameterEditor from "./PolygonParameterEditor";
+import SelectAPolygonLayerParameterEditor from "./SelectAPolygonLayerParameterEditor";
 import RectangleParameterEditor from "./RectangleParameterEditor";
 import RegionParameterEditor from "./RegionParameterEditor";
 import RegionTypeParameterEditor from "./RegionTypeParameterEditor";
@@ -168,6 +169,26 @@ ParameterEditor.parameterTypeConverters = [
               viewState={parameterEditor.props.viewState}
               parameter={parameterEditor.props.parameter}
               parameterViewModel={parameterEditor.props.parameterViewModel}
+            />
+          </div>
+        );
+      }
+    }
+  },
+  {
+    id: "multiPolygon",
+    parameterTypeToDiv: function MultiPolygonParameterToDiv(
+      type,
+      parameterEditor
+    ) {
+      if (type === this.id) {
+        return (
+          <div>
+            {parameterEditor.renderLabel()}
+            <SelectAPolygonLayerParameterEditor
+              previewed={parameterEditor.props.previewed}
+              viewState={parameterEditor.props.viewState}
+              parameter={parameterEditor.props.parameter}
             />
           </div>
         );

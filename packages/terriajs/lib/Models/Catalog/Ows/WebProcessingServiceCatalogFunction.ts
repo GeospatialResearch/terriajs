@@ -45,6 +45,10 @@ import { ModelConstructorParameters } from "../../Definition/Model";
 
 import WebProcessingServiceCatalogFunctionJob from "./WebProcessingServiceCatalogFunctionJob";
 import NumberParameter from "../../FunctionParameters/NumberParameter";
+import SelectALayerParameter from "../../FunctionParameters/SelectALayerParameter";
+import SelectAPolygonParameter from "../../FunctionParameters/SelectAPolygonParameter";
+import { Feature } from "geojson";
+import { FeatureCollectionWithCrs } from "../../../Core/GeoJson";
 
 type AllowedValues = {
   Value?: string | string[];
@@ -627,6 +631,49 @@ const RectangleConverter = {
   }
 };
 
+const FeatureCollectionConverter = {
+  inputToParameter: function (
+    catalogFunction: CatalogFunctionMixin.Instance,
+    input: Input,
+    options: FunctionParameterOptions
+  ) {
+    if (
+      !isDefined(input.ComplexData) ||
+      !isDefined(input.ComplexData.Default) ||
+      !isDefined(input.ComplexData.Default.Format) ||
+      !isDefined(input.ComplexData.Default.Format.Schema)
+    ) {
+      return;
+    }
+
+    const schema = input.ComplexData.Default.Format.Schema;
+    if (
+      schema.indexOf(
+        "http://geojson.org/geojson-spec.html#FeatureCollection"
+      ) !== 0
+    ) {
+      return undefined;
+    }
+    return new SelectALayerParameter(catalogFunction, {
+      ...options
+    });
+  },
+
+  parameterToInput: function (
+    parameter: FunctionParameter
+  ): WpsInputData | undefined {
+    if (!isDefined(parameter.value) || parameter.value === null) {
+      return;
+    }
+    return {
+      inputType: "ComplexData",
+      inputValue: SelectALayerParameter.formatValueForUrl(
+        parameter.value as unknown as FeatureCollectionWithCrs
+      )
+    };
+  }
+};
+
 const GeoJsonGeometryConverter = {
   inputToParameter: function (
     catalogFunction: CatalogFunctionMixin.Instance,
@@ -737,6 +784,8 @@ function parameterTypeToConverter(
       return PolygonConverter;
     case RectangleParameter.type:
       return RectangleConverter;
+    case SelectALayerParameter.type:
+      return FeatureCollectionConverter;
     case GeoJsonParameter.type:
       return GeoJsonGeometryConverter;
     default:
@@ -752,6 +801,7 @@ const parameterConverters: ParameterConverter[] = [
   LineConverter,
   PolygonConverter,
   RectangleConverter,
+  FeatureCollectionConverter,
   GeoJsonGeometryConverter
 ];
 

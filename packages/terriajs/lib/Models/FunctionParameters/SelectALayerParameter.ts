@@ -1,4 +1,4 @@
-import { Feature, Polygon } from "geojson";
+import { Feature, FeatureCollection, Polygon } from "geojson";
 import { computed, makeObservable } from "mobx";
 import { FeatureCollectionWithCrs } from "../../Core/GeoJson";
 import { JsonObject } from "../../Core/Json";
@@ -25,11 +25,13 @@ export default class SelectALayerParameter
     return JSON.stringify(value);
   }
 
-  static getGeoJsonFeature(value: any): Feature<Polygon>[] {
-    return value.features;
+  static getGeoJsonFeature(value: FeatureCollection): Feature<Polygon>[] {
+    return value.features as Feature<Polygon>[];
   }
 
   @computed get geoJsonFeature() {
-    return SelectALayerParameter.getGeoJsonFeature(this.value);
+    return SelectALayerParameter.getGeoJsonFeature(
+      this.value as unknown as FeatureCollection
+    );
   }
 }

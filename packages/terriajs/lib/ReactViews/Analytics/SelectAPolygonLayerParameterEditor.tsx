@@ -1,15 +1,87 @@
-import { FeatureCollection } from "geojson";
 import { IReactionPublic, reaction, runInAction } from "mobx";
+import { observer } from "mobx-react";
+import { Component } from "react";
+import { WithTranslation, withTranslation } from "react-i18next";
 import createGuid from "terriajs-cesium/Source/Core/createGuid";
 import { FeatureCollectionWithCrs } from "../../Core/GeoJson";
 import isDefined from "../../Core/isDefined";
+import { JsonObject } from "../../Core/Json";
 import GeoJsonCatalogItem from "../../Models/Catalog/CatalogItems/GeoJsonCatalogItem";
 import CommonStrata from "../../Models/Definition/CommonStrata";
-import GeoJsonParameter from "../../Models/FunctionParameters/GeoJsonParameter";
+import SelectALayerParameter from "../../Models/FunctionParameters/SelectALayerParameter";
 import MapInteractionMode from "../../Models/MapInteractionMode";
 import Terria from "../../Models/Terria";
+import CatalogFunctionMixin from "../../ModelMixins/CatalogFunctionMixin";
 import ViewState from "../../ReactViewModels/ViewState";
-import { JsonObject } from "../../Core/Json";
+import Styles from "./parameter-editors.scss";
+import { selectOnMap as selectExistingLayerOnMap } from "./SelectAPolygonLayerParameterEditor";
+
+interface SelectALayerParameterEditorProps extends WithTranslation {
+  previewed: CatalogFunctionMixin.Instance;
+  parameter: SelectALayerParameter;
+  viewState: ViewState;
+}
+
+interface SelectedLayer extends FeatureCollectionWithCrs {
+  id: string;
+}
+
+@observer
+class SelectALayerParameterEditor extends Component<SelectALayerParameterEditorProps> {
+  onCleanUp() {
+    this.props.viewState.openAddData();
+  }
+
+  selectExistingLayerOnMap() {
+    runInAction(() => {
+      this.props.parameter.setValue(CommonStrata.user, undefined);
+      selectExistingLayerOnMap(
+        this.props.previewed.terria,
+        this.props.viewState,
+        this.props.parameter
+      );
+    });
+  }
+
+  render() {
+    const { t } = this.props;
+    return (
+      <div>
+        <div>
+          <strong>{t("analytics.selectLocation")}</strong>
+        </div>
+        <div
+          className="container"
+          style={{
+            marginTop: "10px",
+            marginBottom: "10px",
+            display: "table",
+            width: "100%"
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => this.selectExistingLayerOnMap()}
+            className={Styles.btnLocationSelector}
+          >
+            <strong>{t("analytics.existingLayer")}</strong>
+          </button>
+        </div>
+        <input
+          className={Styles.field}
+          type="text"
+          readOnly
+          value={getDisplayValue(
+            this.props.parameter.value as unknown as SelectedLayer
+          )}
+        />
+        {getDisplayValue(
+          this.props.parameter.value as unknown as SelectedLayer
+        ) === "" && <div>{t("analytics.nothingSelected")}</div>}
+      </div>
+    );
+  }
+}
 
 /**
  * Prompts the user to select a point on the map.
@@ -17,7 +89,7 @@ import { JsonObject } from "../../Core/Json";
 export function selectOnMap(
   terria: Terria,
   viewState: ViewState,
-  parameter: GeoJsonParameter
+  parameter: SelectALayerParameter
 ) {
   // Cancel any feature picking already in progress.
   terria.pickedFeatures = undefined;
@@ -72,7 +144,7 @@ export function selectOnMap(
         runInAction(() => {
           parameter.setValue(
             CommonStrata.user,
-            geojson as unknown as JsonObject
+            geojson as unknown as JsonObject[]
           );
           terria.mapInteractionModeStack.pop();
           viewState.openAddData();
@@ -88,9 +160,11 @@ export function selectOnMap(
   viewState.explorerPanelIsVisible = false;
 }
 
-export function getDisplayValue(value: FeatureCollection & { id: string }) {
+export function getDisplayValue(value: SelectedLayer) {
   if (!isDefined(value)) {
     return "";
   }
   return value.id;
 }
+
+export default withTranslation()(SelectALayerParameterEditor);

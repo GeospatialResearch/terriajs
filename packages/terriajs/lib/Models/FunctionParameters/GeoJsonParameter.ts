@@ -1,4 +1,4 @@
-import { Feature } from "geojson";
+import { Feature, FeatureCollection } from "geojson";
 import { computed, makeObservable, observable } from "mobx";
 import Cartographic from "terriajs-cesium/Source/Core/Cartographic";
 import { FeatureCollectionWithCrs } from "../../Core/GeoJson";
@@ -117,7 +117,9 @@ export default class GeoJsonParameter
       return SelectAPolygonParameter.getGeoJsonFeature(this.value);
     }
     if (this.subtype === GeoJsonParameter.SelectALayerType) {
-      return SelectALayerParameter.getGeoJsonFeature(this.value);
+      return SelectALayerParameter.getGeoJsonFeature(
+        this.value as unknown as FeatureCollection
+      );
     }
 
     return;
