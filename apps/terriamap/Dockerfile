@@ -1,8 +1,9 @@
 # develop container
-FROM node:20 AS develop
+FROM node:24 AS develop
 
 # build container
-FROM node:20 AS build
+FROM node:24 AS build
+RUN corepack enable
 USER node
 
 COPY --chown=node:node . /app
